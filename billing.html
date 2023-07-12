@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    < charset="UTF-8">
+    <>Billing Page</title>
+    <script>
+      function updateBill() {
+        // Retrieve the selected items and their prices
+        var items = document.querySelectorAll('input:checked');
+        var total = 0;
+        for (var i = 0; i < items.length; i++) {
+          var item = items[i];
+          var price = parseFloat(item.getAttribute('data-price'));
+          total += price;
+        }
+        // Update the displayed total
+        document.getElementById('total').textContent = '$' + total.toFixed(2);
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Billing Page</h1>
+    <form>
+      <fieldset>
+        <legend>Menu</legend>
+        <?php
+          // Connect to the database and retrieve the items and their prices
+          $db = new PDO('mysql:host=localhost;dbname=mydatabase;charset=utf8', 'myusername', 'mypassword');
+          $items = $db->query('SELECT id, name, price FROM items')->fetchAll();
+          // Display the items as checkboxes with their prices as data attributes
+          foreach ($items as $item) {
+            echo '<><input type="checkbox" name="item[]" value="'.$item['id'].'" data-price="'.$item['price'].'" onclick="updateBill()"> '.$item['name'].' ($'.$item['price'].')</label><br>';
+          }
+        ?>
+      </fieldset>
+      <fieldset>
+        <legend>Bill</legend>
+        <div>
+          Total: <span id="total">$0.00</span>
+        </div>
+      </fieldset>
+    </form>
+  </body>
+</html>
